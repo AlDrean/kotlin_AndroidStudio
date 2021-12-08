@@ -42,7 +42,7 @@ class MainActivity : AppCompatActivity() {
                     Toast.LENGTH_LONG
                 ).show()
             else {
-                Toast.makeText(this@MainActivity, "Não beba antes de dirigir", Toast.LENGTH_SHORT).show()
+
                 resultado = btnCalcular_onClick(preco, autonomia, distancia)
                 lblResultado.text = "R$ ${String.format("%.2f", resultado)}"
             }
