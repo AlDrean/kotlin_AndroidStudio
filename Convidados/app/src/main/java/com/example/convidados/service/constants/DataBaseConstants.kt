@@ -1,4 +1,4 @@
-package com.example.convidados.service
+package com.example.convidados.service.constants
 
 class DataBaseConstants private constructor(){//o que é um private constructor?
     object GUEST{

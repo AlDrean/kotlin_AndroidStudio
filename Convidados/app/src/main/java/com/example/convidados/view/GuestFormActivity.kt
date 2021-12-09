@@ -3,27 +3,32 @@ package com.example.convidados.view
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
-import android.widget.Button
-import android.widget.EditText
-import android.widget.RadioButton
-import android.widget.Toast
+import android.widget.*
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.example.convidados.R
+import com.example.convidados.service.constants.GuestConstants
 import com.example.convidados.ui.GuestFormViewModel
 
 class GuestFormActivity : AppCompatActivity(), View.OnClickListener{
 
     private lateinit var mViewModel:GuestFormViewModel
-
+    private var mGuestID:Int = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
+
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_guest_form)
 
         mViewModel= ViewModelProvider(this).get(GuestFormViewModel::class.java)
+        val radio_presence = findViewById<RadioButton>(R.id.radio_present)
+
 
         setListeners()
+        observe()
+        loadData()
+
+        radio_presence.isChecked = true
     }
 
     override fun onClick(v: View)
@@ -35,7 +40,7 @@ class GuestFormActivity : AppCompatActivity(), View.OnClickListener{
 
         val id = v.id
         if (id == R.id.btn_save) {
-            mViewModel.save(edt_name.text.toString(),rbtn_presence.isChecked)
+            mViewModel.save(mGuestID,edt_name.text.toString(),rbtn_presence.isChecked)
 
             Toast.makeText(this@GuestFormActivity, "Clicked button", Toast.LENGTH_SHORT).show()
         }
@@ -45,10 +50,18 @@ class GuestFormActivity : AppCompatActivity(), View.OnClickListener{
     private fun setListeners() {
         var btn_save = findViewById<Button>(R.id.btn_save)
 //        @TODO: Verificar porque adicionar btn_save abaixo da declaração de mviewModel quebra o código
-
+        loadData()
         btn_save.setOnClickListener(this)
         observe()
 
+    }
+
+    private fun loadData() {
+        val bundle = intent.extras
+        if (bundle != null){
+            mGuestID = bundle.getInt(GuestConstants.GUESTID)
+            mViewModel.load(mGuestID)
+        }
     }
 
 
@@ -59,6 +72,21 @@ class GuestFormActivity : AppCompatActivity(), View.OnClickListener{
             }else
             {
                 Toast.makeText(applicationContext, "Falha ",Toast.LENGTH_SHORT).show()
+            }
+            finish()
+        })
+        mViewModel.guest.observe(this, Observer {
+            val edt_name = findViewById<TextView>(R.id.edt_name)
+            val radio_present = findViewById<RadioButton>(R.id.radio_present)
+            val radio_absent = findViewById<RadioButton>(R.id.radio_absent)
+
+            edt_name.text = it.name
+            if (it.presence){
+                radio_present.isChecked = true
+            }
+            else{
+                radio_absent.isChecked = true
+
             }
         })
     }
