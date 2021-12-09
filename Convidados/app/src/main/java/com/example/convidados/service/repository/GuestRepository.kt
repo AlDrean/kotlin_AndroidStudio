@@ -2,6 +2,7 @@ package com.example.convidados.service.repository
 
 import android.content.ContentValues
 import android.content.Context
+import androidx.core.content.contentValuesOf
 import com.example.convidados.service.DataBaseConstants
 import com.example.convidados.service.model.GuestModel
 import java.lang.Exception
@@ -62,6 +63,43 @@ class GuestRepository private constructor(context: Context){
         return list
     }
 
+    fun getGuest(id: Int):GuestModel?{
+        var guest:GuestModel? = null
+
+
+        return try{
+            val db = mGuestDataBaseHelper.readableDatabase
+
+            val projection = arrayOf(DataBaseConstants.GUEST.COLUMNS.NAME,DataBaseConstants.GUEST.COLUMNS.PRESENCE)
+
+            val selections = DataBaseConstants.GUEST.COLUMNS.ID+"= ?"
+            val args = arrayOf(id.toString())
+
+            val cursor = db.query(
+                                DataBaseConstants.GUEST.TABLE_NAME,
+                                projection,
+                                selections,
+                                args,
+                                null,
+                                null,
+                                null)
+
+            if (cursor != null && cursor.count >0) {
+                cursor.moveToFirst()
+
+                var name = cursor.getString(cursor.getColumnIndex(DataBaseConstants.GUEST.COLUMNS.NAME))
+                var presence = (cursor.getInt(cursor.getColumnIndex(DataBaseConstants.GUEST.COLUMNS.PRESENCE)) == 1)
+
+                guest = GuestModel(id,name,presence)
+            }
+
+            cursor?.close()
+            guest
+        }catch (e: Exception) {
+            guest
+        }
+    }
+
     fun update(guest: GuestModel):Boolean{
         return try {
             val db = mGuestDataBaseHelper.writableDatabase
@@ -88,7 +126,7 @@ class GuestRepository private constructor(context: Context){
             val db = mGuestDataBaseHelper.writableDatabase
 
             val selections = DataBaseConstants.GUEST.COLUMNS.ID+"= ?"
-            val args = arrayOf(guest)
+            val args = arrayOf(guest.toString())
 
             db.delete(DataBaseConstants.GUEST.TABLE_NAME,selections,args)
 
