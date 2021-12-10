@@ -116,7 +116,7 @@ class GuestRepository private constructor(context: Context) {
 //            )
 
 
-            val cursor = db.rawQuery("select * from "+ DataBaseConstants.GUEST.TABLE_NAME+" where "+ DataBaseConstants.GUEST.COLUMNS.PRESENCE+" = 0",null)
+            val cursor = db.rawQuery("select * from "+ DataBaseConstants.GUEST.TABLE_NAME+" where "+ DataBaseConstants.GUEST.COLUMNS.PRESENCE+" = 1",null)
             if (cursor != null && cursor.count > 0) {
                 while (cursor.moveToNext()) {
 
@@ -163,7 +163,7 @@ class GuestRepository private constructor(context: Context) {
 //            )
 
 
-            val cursor = db.rawQuery("select * from "+ DataBaseConstants.GUEST.TABLE_NAME+" where "+ DataBaseConstants.GUEST.COLUMNS.PRESENCE+" = 1",null)
+            val cursor = db.rawQuery("select * from "+ DataBaseConstants.GUEST.TABLE_NAME+" where "+ DataBaseConstants.GUEST.COLUMNS.PRESENCE+" = 0",null)
             if (cursor != null && cursor.count > 0) {
                 while (cursor.moveToNext()) {
 
